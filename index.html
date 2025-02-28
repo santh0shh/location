@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Location Tracking with Leaflet</title>
+    <title>Live Path Tracking with Leaflet</title>
     <!-- Include Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-    <h3>Live Location Tracking</h3>
+    <h3>Live Path Tracking</h3>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -29,12 +29,16 @@
         }).addTo(map);
 
         var userMarker;
+        var pathCoordinates = []; // Array to store coordinates for path
 
         // Check if geolocation is supported and track the user
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(function(position) {
                 var latitude = position.coords.latitude;
                 var longitude = position.coords.longitude;
+
+                // Add the new position to the path coordinates array
+                pathCoordinates.push([latitude, longitude]);
 
                 // If the marker doesn't exist, create it
                 if (!userMarker) {
@@ -43,6 +47,9 @@
                     // Update the marker's position
                     userMarker.setLatLng([latitude, longitude]);
                 }
+
+                // Create or update the polyline with the new path coordinates
+                L.polyline(pathCoordinates, { color: 'blue' }).addTo(map);
 
                 // Center the map on the user's location
                 map.setView([latitude, longitude], 14);
