@@ -32,33 +32,34 @@
         var pathCoordinates = []; // Array to store coordinates for path
 
         // Check if geolocation is supported and track the user
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(function(position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
+        function loc(){
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+                    // Add the new position to the path coordinates array
+                    pathCoordinates.push([latitude, longitude]);
+                    // If the marker doesn't exist, create it
+                    if (!userMarker) {
+                        userMarker = L.marker([latitude, longitude]).addTo(map);
+                    } else {
+                        // Update the marker's position
+                        userMarker.setLatLng([latitude, longitude]);
+                    }
 
-                // Add the new position to the path coordinates array
-                pathCoordinates.push([latitude, longitude]);
+                    // Create or update the polyline with the new path coordinates
+                    L.polyline(pathCoordinates, { color: 'blue' }).addTo(map);
 
-                // If the marker doesn't exist, create it
-                if (!userMarker) {
-                    userMarker = L.marker([latitude, longitude]).addTo(map);
-                } else {
-                    // Update the marker's position
-                    userMarker.setLatLng([latitude, longitude]);
-                }
-
-                // Create or update the polyline with the new path coordinates
-                L.polyline(pathCoordinates, { color: 'blue' }).addTo(map);
-
-                // Center the map on the user's location
-                map.setView([latitude, longitude], 14);
-            }, function(error) {
-                console.error("Geolocation error: " + error.message);
-            });
-        } else {
-            console.log("Geolocation is not supported by this browser.");
+                    // Center the map on the user's location
+                    map.setView([latitude, longitude], 14);
+                }, function(error) {
+                    console.error("Geolocation error: " + error.message);
+                });
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+            }
         }
+        setInterval(loc,5000);
     </script>
 </body>
 </html>
